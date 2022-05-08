@@ -83,6 +83,7 @@ public class TransportController {
     @GetMapping("/test")
     public ResponseEntity<List<Products>> test() {
         TransportService transportService = new TransportService();
+        List<MeansOfTransport> meansOfTransport = meansOfTransportRepository.findAll();
         List<String> productsList = new ArrayList<>();
         productsList.add("Product001");
         productsList.add("Product201");
@@ -90,7 +91,8 @@ public class TransportController {
         productsList.add("Product321");
         productsList.add("Product402");
         List<Products> products = mapProducts(productsList);
-        System.out.println(transportService.addAllWeights(products));
+        System.out.println(transportService.findCheapestDelivery(products, meansOfTransport));
+//        System.out.println(transportService.sortByWeight(products));
         return new ResponseEntity(products, HttpStatus.OK);
     }
 
