@@ -43,9 +43,9 @@ public class MeanOfTransport {
         List<Product> result = new ArrayList<>();
         int weightSum = 0;
 
-        for(Product product : products) {
+        for (Product product : products) {
             weightSum += product.getWeight();
-            if(weightSum < maxWeight)
+            if (weightSum < maxWeight)
                 result.add(product);
         }
         return result;

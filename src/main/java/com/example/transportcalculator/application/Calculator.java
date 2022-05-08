@@ -1,10 +1,10 @@
 package com.example.transportcalculator.application;
 
-import com.example.transportcalculator.domain.entity.ChosenTransport;
 import com.example.transportcalculator.domain.entity.Product;
+import com.example.transportcalculator.domain.entity.TransportDetails;
 
 import java.util.List;
 
 public interface Calculator {
-    List<ChosenTransport> calculateTransports(List<Product> products);
+    TransportDetails calculateTransports(List<Product> products);
 }

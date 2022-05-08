@@ -1,8 +1,8 @@
 package com.example.transportcalculator.application;
 
-import com.example.transportcalculator.domain.entity.ChosenTransport;
 import com.example.transportcalculator.domain.entity.MeanOfTransport;
 import com.example.transportcalculator.domain.entity.Product;
+import com.example.transportcalculator.domain.entity.TransportDetails;
 import com.example.transportcalculator.domain.repository.MeansOfTransportRepository;
 import com.example.transportcalculator.domain.repository.ProductsRepository;
 import com.univocity.parsers.common.record.Record;
@@ -26,6 +26,7 @@ public class TransportController {
     private final ProductsRepository productsRepository;
 
     private final MeansOfTransportRepository meansOfTransportRepository;
+
 
     public TransportController(ProductsRepository productsRepository, MeansOfTransportRepository meansOfTransportRepository) {
         this.productsRepository = productsRepository;
@@ -81,36 +82,20 @@ public class TransportController {
         productsRepository.deleteAll();
     }
 
-    @GetMapping("/test")
-    public ResponseEntity<List<ChosenTransport>> test() {
-        List<MeanOfTransport> mot = meansOfTransportRepository.findAll();
-        List<String> productsList = new ArrayList<>();
-        productsList.add("Product001");
-        productsList.add("Product201");
-        productsList.add("Product011");
-        productsList.add("Product321");
-        productsList.add("Product402");
-        productsList.add("Product452");
-        productsList.add("Product502");
-        productsList.add("Product672");
-        productsList.add("Product710");
-        List<Product> products = mapProducts(productsList);
-        TransportCalculator transportCalculator = new TransportCalculator(mot);
-        List<ChosenTransport> chosenTransports = transportCalculator.calculateTransports(products);
-        return new ResponseEntity(chosenTransports, HttpStatus.OK);
-    }
-
-    @GetMapping("/test2")
-    public ResponseEntity<Product> test2() {
-        Product product = productsRepository.findByProductName("Product002");
-        return new ResponseEntity<>(product, HttpStatus.OK);
-    }
-
     private List<Product> mapProducts(List<String> productsList) {
         List<Product> products = new ArrayList<>();
         productsList.forEach(product -> {
             products.add(productsRepository.findByProductName(product));
         });
         return products;
+    }
+
+    @GetMapping("/calculate")
+    public TransportDetails calculateOptimalTransport(@RequestParam List<String> list) {
+        List<Product> products = mapProducts(list);
+        List<MeanOfTransport> mot = meansOfTransportRepository.findAll();
+        TransportCalculator calculator = new TransportCalculator(mot);
+        TransportDetails result = calculator.calculateTransports(products);
+        return result;
     }
 }
