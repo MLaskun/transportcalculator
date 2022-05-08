@@ -9,8 +9,8 @@ import java.util.List;
 @Getter
 @Setter
 public class ChosenTransport {
-    public MeanOfTransport transport;
-    public List<Product> products;
+    private MeanOfTransport transport;
+    private List<Product> products;
 
     public ChosenTransport() {
         this.products = new ArrayList<>();

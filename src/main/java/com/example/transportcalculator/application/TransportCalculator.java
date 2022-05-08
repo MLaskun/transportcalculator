@@ -18,8 +18,10 @@ public class TransportCalculator implements Calculator {
     private List<TransportRule> calculationRules = new ArrayList<>();
 
     public TransportCalculator(List<MeanOfTransport> transports) {
+        transports.sort(Comparator.comparingInt(MeanOfTransport::getCost));
         this.availableTransports = transports;
         this.calculationRules.add(new SingleTransportRule());
+        this.calculationRules.add(new MultipleTransportRule());
     }
 
     @Override
