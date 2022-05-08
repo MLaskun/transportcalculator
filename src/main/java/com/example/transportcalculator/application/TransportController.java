@@ -1,7 +1,8 @@
 package com.example.transportcalculator.application;
 
-import com.example.transportcalculator.domain.entity.MeansOfTransport;
-import com.example.transportcalculator.domain.entity.Products;
+import com.example.transportcalculator.domain.entity.ChosenTransport;
+import com.example.transportcalculator.domain.entity.MeanOfTransport;
+import com.example.transportcalculator.domain.entity.Product;
 import com.example.transportcalculator.domain.repository.MeansOfTransportRepository;
 import com.example.transportcalculator.domain.repository.ProductsRepository;
 import com.univocity.parsers.common.record.Record;
@@ -40,12 +41,12 @@ public class TransportController {
 
     @PostMapping("/products")
     public ResponseEntity uploadProducts(@RequestParam("file") MultipartFile file) throws Exception {
-        List<Products> products = new ArrayList<>();
+        List<Product> products = new ArrayList<>();
         InputStream inputStream = file.getInputStream();
         CsvParser parser = new CsvParser(setParser());
         List<Record> records = parser.parseAllRecords(inputStream);
         records.forEach(record -> {
-            Products product = new Products();
+            Product product = new Product();
             product.setProductName(record.getString("Product Name"));
             product.setProductionTime(Integer.parseInt(record.getString("Production Time")));
             product.setWeight(Integer.parseInt(record.getString("Weight")));
@@ -57,12 +58,12 @@ public class TransportController {
 
     @PostMapping("/means")
     public ResponseEntity uploadMeansOfTransport(@RequestParam("file") MultipartFile file) throws Exception {
-        List<MeansOfTransport> meansOfTransport = new ArrayList<>();
+        List<MeanOfTransport> meansOfTransport = new ArrayList<>();
         InputStream inputStream = file.getInputStream();
         CsvParser parser = new CsvParser(setParser());
         List<Record> records = parser.parseAllRecords(inputStream);
         records.forEach(record -> {
-            MeansOfTransport meanOfTransport = new MeansOfTransport();
+            MeanOfTransport meanOfTransport = new MeanOfTransport();
             meanOfTransport.setName(record.getString("Means of transport"));
             meanOfTransport.setCost(Integer.parseInt(record.getString("Cost")));
             meanOfTransport.setDeliveryTime(Integer.parseInt(record.getString("Delivery Time")));
@@ -81,29 +82,32 @@ public class TransportController {
     }
 
     @GetMapping("/test")
-    public ResponseEntity<List<Products>> test() {
-        TransportService transportService = new TransportService();
-        List<MeansOfTransport> meansOfTransport = meansOfTransportRepository.findAll();
+    public ResponseEntity<List<ChosenTransport>> test() {
+        List<MeanOfTransport> mot = meansOfTransportRepository.findAll();
         List<String> productsList = new ArrayList<>();
         productsList.add("Product001");
         productsList.add("Product201");
         productsList.add("Product011");
         productsList.add("Product321");
         productsList.add("Product402");
-        List<Products> products = mapProducts(productsList);
-        System.out.println(transportService.findCheapestDelivery(products, meansOfTransport));
-//        System.out.println(transportService.sortByWeight(products));
-        return new ResponseEntity(products, HttpStatus.OK);
+        productsList.add("Product452");
+        productsList.add("Product502");
+        productsList.add("Product672");
+        productsList.add("Product710");
+        List<Product> products = mapProducts(productsList);
+        TransportCalculator transportCalculator = new TransportCalculator(mot);
+        List<ChosenTransport> chosenTransports = transportCalculator.calculateTransports(products);
+        return new ResponseEntity(chosenTransports, HttpStatus.OK);
     }
 
     @GetMapping("/test2")
-    public ResponseEntity<Products> test2() {
-        Products product = productsRepository.findByProductName("Product002");
+    public ResponseEntity<Product> test2() {
+        Product product = productsRepository.findByProductName("Product002");
         return new ResponseEntity<>(product, HttpStatus.OK);
     }
 
-    private List<Products> mapProducts(List<String> productsList) {
-        List<Products> products = new ArrayList<>();
+    private List<Product> mapProducts(List<String> productsList) {
+        List<Product> products = new ArrayList<>();
         productsList.forEach(product -> {
             products.add(productsRepository.findByProductName(product));
         });

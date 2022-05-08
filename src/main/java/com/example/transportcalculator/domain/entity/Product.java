@@ -15,21 +15,17 @@ import javax.persistence.Id;
 @Setter
 @ToString
 @NoArgsConstructor
-public class MeansOfTransport {
+public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    private String name;
-    private int cost;
-    private int deliveryTime;
-    private int minWeight;
-    private int maxWeight;
+    private String productName;
+    private int productionTime;
+    private int weight;
 
-    public MeansOfTransport(String name, int cost, int deliveryTime, int minWeight, int maxWeight) {
-        this.name = name;
-        this.cost = cost;
-        this.deliveryTime = deliveryTime;
-        this.minWeight = minWeight;
-        this.maxWeight = maxWeight;
+    public Product(String productName, int productionTime, int weight) {
+        this.productName = productName;
+        this.productionTime = productionTime;
+        this.weight = weight;
     }
 }
